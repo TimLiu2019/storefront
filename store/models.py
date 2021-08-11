@@ -59,7 +59,7 @@ class Order(models.Model):
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
         max_length=1, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    # product = models.ForeignKey(Product, on_delete=models.CASCADE)
     # If delete an order, do not delete a customer
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 

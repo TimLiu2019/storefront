@@ -11,8 +11,8 @@ def say_hello(request):
     #     product = Product.objects.get(pk=0)
     # except ObjectDoesNotExist:
     #     pass
-    product = Product.objects.filter(pk=0).first()
+    queryset = Product.objects.filter(unit_price__range=(20,30))
 
     
   
-    return render(request, 'hello.html', {'name': 'Jeo'})
+    return render(request, 'hello.html', {'name': 'Jeo','products':list(queryset)})
