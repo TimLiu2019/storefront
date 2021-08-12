@@ -7,7 +7,7 @@
     {% endif %}
     <ul>
       {% for product in products %}
-      <li>{{ product.title }}</li>
+      <li>{{ product.id }} - {{product.customer.first_name}}</li>
       {% endfor %}
     </ul>
   </body>
