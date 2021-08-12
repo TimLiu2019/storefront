@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.db.models import Q,F
+from django.db.models import Q, F
+from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
 from store.models import Customer, Collection, Order, OrderItem
 
@@ -33,19 +34,23 @@ def say_hello(request):
 
     # Products: inventory <10 Or price <20
     # queryset = Product.objects.filter(Q(inventory__lt=20) | Q(unit_price__lt=20))
-    
+
     # Products: inventory = price
     # queryset = Product.objects.filter(inventory=F('collection__id')).order_by('title')、
 
     # queryset = Product.objects.values('id','title','collection__title')
     # queryset = OrderItem.objects.values('product_id').distinct()
 
-
     # select_related (1)
     # prefetch_related (n)
     # queryset = Product.objects.prefetch_related('promotions').select_related('collection').all()
-    
-    #  Get the last 5 orders with their customer and items (incl product)
-    queryset = Order.objects.select_related('customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[:5]
 
-    return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
+    #  Get the last 5 orders with their customer and items (incl product)
+    #queryset = Order.objects.select_related('customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[:5]
+
+    # Aggregate
+    result = Product.objects.aggregate(
+        count=Count('id'), min_price=Min('unit_price'))
+
+    return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
+   # return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
