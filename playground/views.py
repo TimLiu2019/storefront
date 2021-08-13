@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.db.models import Q, F
+from django.db.models import Q, F, Value
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
 from store.models import Customer, Collection, Order, OrderItem
@@ -65,7 +65,10 @@ def say_hello(request):
     # result = Order.objects.filter(customer__id=1).aggregate(count=Count('id'))
 
     # what is the min, max and avg price of products in collection 1?
-    result = Product.objects.filter(collection__id=3).aggregate(min_price=Min('unit_price'),avg_price=Avg('unit_price'),max_price=Max('unit_price'))
+    # result = Product.objects.filter(collection__id=3).aggregate(min_price=Min('unit_price'),avg_price=Avg('unit_price'),max_price=Max('unit_price'))
+    
+    queryset = Customer.objects.annotate(new_id=F('id') + 1)
 
-    return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
-   # return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
+
+    # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
+    return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
