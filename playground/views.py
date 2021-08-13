@@ -49,8 +49,23 @@ def say_hello(request):
     #queryset = Order.objects.select_related('customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[:5]
 
     # Aggregate
-    result = Product.objects.aggregate(
-        count=Count('id'), min_price=Min('unit_price'))
+   #  result = Product.objects.aggregate(
+   #      count=Count('id'), min_price=Min('unit_price'))
+
+    # Aggregate how many orders do we have
+    #  result = Order.objects.aggregate(count=Count('id'))
+
+    # Aggregate how many units of product 1 have we sold
+    # result = Order.objects.aggregate(count=Count('id'))
+
+    # How many units of product 1 have we sold
+    # result = OrderItem.objects.filter(product_id=1).aggregate(unit_sold=Sum('quantity'))
+    
+    # How many orders have customer 1 placed?
+    # result = Order.objects.filter(customer__id=1).aggregate(count=Count('id'))
+
+    # what is the min, max and avg price of products in collection 1?
+    result = Product.objects.filter(collection__id=3).aggregate(min_price=Min('unit_price'),avg_price=Avg('unit_price'),max_price=Max('unit_price'))
 
     return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
    # return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
