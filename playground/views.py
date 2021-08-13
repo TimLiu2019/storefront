@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.db.models import Q, F, Value
+from django.db.models import Q, F, Value, Func
+from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
 from store.models import Customer, Collection, Order, OrderItem
@@ -18,13 +19,13 @@ def say_hello(request):
    # queryset = Product.objects.filter(unit_price__range=(20,30))
 
     # Customers with .com accounts
-    #queryset = Customer.objects.filter(email__icontains='.com')
+    # queryset = Customer.objects.filter(email__icontains='.com')
 
     # Collections that do not have a featured product
-    #queryset = Collection.objects.filter(featured_product__isnull=True)
+    # queryset = Collection.objects.filter(featured_product__isnull=True)
 
     # Product with low inventory
-    #queryset = Product.objects.filter(inventory__lt=10)
+    # queryset = Product.objects.filter(inventory__lt=10)
 
     # Orders placed by customer with id = 1
     # queryset = Order.objects.filter(customer__id=1)
@@ -46,7 +47,7 @@ def say_hello(request):
     # queryset = Product.objects.prefetch_related('promotions').select_related('collection').all()
 
     #  Get the last 5 orders with their customer and items (incl product)
-    #queryset = Order.objects.select_related('customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[:5]
+    # queryset = Order.objects.select_related('customer').prefetch_related('orderitem_set__product').order_by('-placed_at')[:5]
 
     # Aggregate
    #  result = Product.objects.aggregate(
@@ -60,15 +61,25 @@ def say_hello(request):
 
     # How many units of product 1 have we sold
     # result = OrderItem.objects.filter(product_id=1).aggregate(unit_sold=Sum('quantity'))
-    
+
     # How many orders have customer 1 placed?
     # result = Order.objects.filter(customer__id=1).aggregate(count=Count('id'))
 
     # what is the min, max and avg price of products in collection 1?
     # result = Product.objects.filter(collection__id=3).aggregate(min_price=Min('unit_price'),avg_price=Avg('unit_price'),max_price=Max('unit_price'))
-    
-    queryset = Customer.objects.annotate(new_id=F('id') + 1)
 
+    # queryset = Customer.objects.annotate(new_id=F('id') + 1)
+
+   #  queryset = Customer.objects.annotate(
+   #      # concat
+   #      full_name=Func(F('first_name'), Value(
+   #          ' '), F('last_name'), function='CONCAT')
+   #  )
+    queryset = Customer.objects.annotate(
+        # CONCAT
+         full_name=Concat('first_name', Value(
+            ' '), 'last_name')
+      )
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
     return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
