@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.db.models import Q, F, Value, Func
+from django.db.models import Q, F, Value, Func, ExpressionWrapper,DecimalField
 from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
@@ -81,10 +81,38 @@ def say_hello(request):
    #          ' '), 'last_name')
    #    )
 
-    queryset = Customer.objects.annotate(
-        # CONCAT
-         orders_count=Count('order')
-      )
+   #  queryset = Customer.objects.annotate(
+   #      # CONCAT
+   #       orders_count=Count('order')
+   #    )
+
+   #  discounted_price=ExpressionWrapper(F('unit_price')*0.8, output_field=DecimalField())
+   #  queryset = Product.objects.annotate(
+        
+   #       discounted_price=discounted_price
+   #    )
+    # Customers with their last order ID
+   #  queryset = Customer.objects.annotate(last_order_id=Max('order__id'))
+
+    # Collections and count of their products
+   #  queryset = Collection.objects.annotate(product_count=Count('product'))
+
+   # Customers with more than 5 orders
+   # queryset = Customer.objects.annotate(order_count=Count('order')).filter(order_count__gt=5)
+  
+   # Customers and the total amount they have spent
+   #  queryset = Customer.objects.annotate(
+   #     total_spent=Sum(
+   #        F('order__orderitem__unit_price') *
+   #        F('order__orderitem__quantity')
+   #     )
+   #  )
+
+   # Top 5 best-selling products and their total sales
+    queryset = Product.objects.annotate(
+       total_sales=Sum(
+          F('orderitem__unit_price')*
+          F('orderitem__quantity'))).order_by('-total_sales')[:5]
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
     return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
