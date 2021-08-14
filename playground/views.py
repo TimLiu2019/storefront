@@ -75,10 +75,15 @@ def say_hello(request):
    #      full_name=Func(F('first_name'), Value(
    #          ' '), F('last_name'), function='CONCAT')
    #  )
+   #  queryset = Customer.objects.annotate(
+   #      # CONCAT
+   #       full_name=Concat('first_name', Value(
+   #          ' '), 'last_name')
+   #    )
+
     queryset = Customer.objects.annotate(
         # CONCAT
-         full_name=Concat('first_name', Value(
-            ' '), 'last_name')
+         orders_count=Count('order')
       )
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
