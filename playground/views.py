@@ -115,12 +115,9 @@ def say_hello(request):
    #     total_sales=Sum(
    #        F('orderitem__unit_price')*
    #        F('orderitem__quantity'))).order_by('-total_sales')[:5]
+    queryset = TaggedItem.objects.get_tags_for(Product,1)
 
-    content_type = ContentType.objects.get_for_model(Product)
-    queryset = TaggedItem.objects.select_related('tag').filter(
-       content_type=content_type,
-       object_id=1
-    )
+
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
     return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
