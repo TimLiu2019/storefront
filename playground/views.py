@@ -6,6 +6,8 @@ from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
 from store.models import Customer, Collection, Order, OrderItem
+from tags.models import TaggedItem
+from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 
@@ -109,10 +111,16 @@ def say_hello(request):
    #  )
 
    # Top 5 best-selling products and their total sales
-    queryset = Product.objects.annotate(
-       total_sales=Sum(
-          F('orderitem__unit_price')*
-          F('orderitem__quantity'))).order_by('-total_sales')[:5]
+   #  queryset = Product.objects.annotate(
+   #     total_sales=Sum(
+   #        F('orderitem__unit_price')*
+   #        F('orderitem__quantity'))).order_by('-total_sales')[:5]
+
+    content_type = ContentType.objects.get_for_model(Product)
+    queryset = TaggedItem.objects.select_related('tag').filter(
+       content_type=content_type,
+       object_id=1
+    )
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
     return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
