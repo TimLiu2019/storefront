@@ -115,9 +115,17 @@ def say_hello(request):
    #     total_sales=Sum(
    #        F('orderitem__unit_price')*
    #        F('orderitem__quantity'))).order_by('-total_sales')[:5]
-    queryset = TaggedItem.objects.get_tags_for(Product,1)
+   #  queryset = TaggedItem.objects.get_tags_for(Product,1)
+
+
+    collection = Collection()
+    collection.title = 'Video Games'
+    collection.featured_product = Product(pk=1)
+    collection.save()
+    
+
 
 
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
-    return render(request, 'hello.html', {'name': 'Jeo', 'products': list(queryset)})
+    return render(request, 'hello.html', {'name': 'Jeo'})
