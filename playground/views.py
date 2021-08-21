@@ -5,7 +5,7 @@ from django.db.models import Q, F, Value, Func, ExpressionWrapper,DecimalField
 from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from store.models import Product
-from store.models import Customer, Collection, Order, OrderItem
+from store.models import Customer, Collection, Order, OrderItem, Cart, CartItem
 from tags.models import TaggedItem
 from django.contrib.contenttypes.models import ContentType
 
@@ -129,8 +129,27 @@ def say_hello(request):
    #  collection.featured_product = Product(pk=1)
    #  collection.save()
     
-    Collection.objects.filter(pk=11).update(featured_product=None)
+    # update object
+   #  Collection.objects.filter(pk=11).update(featured_product=None)
 
+    # Creating a shopping cart with an item
+    cart = Cart()
+    cart.save()
+
+    item1 = CartItem()
+    item1.cart = cart
+    item1.product_id = 1
+    item1.quantity = 1
+    item1.save()
+
+    # Updating the quantity of an item
+    item1 = CartItem.objects.get(pk=1)
+    item1.quantity = 2
+    item1.save()
+
+    # Removing a cart
+    cart = Cart(pk=1)
+    cart.delete()
 
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
