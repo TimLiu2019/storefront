@@ -117,13 +117,19 @@ def say_hello(request):
    #        F('orderitem__quantity'))).order_by('-total_sales')[:5]
    #  queryset = TaggedItem.objects.get_tags_for(Product,1)
 
-
-    collection = Collection()
-    collection.title = 'Video Games'
-    collection.featured_product = Product(pk=1)
-    collection.save()
+   # create  object
+   #  collection = Collection()
+   #  collection.title = 'Video Games'
+   #  collection.featured_product = Product(pk=1)
+   #  collection.save()
+  
+   # update object
+   #  collection = Collection.objects.get(pk=11)
+   # #  collection.title = 'Video Games'
+   #  collection.featured_product = Product(pk=1)
+   #  collection.save()
     
-
+    Collection.objects.filter(pk=11).update(featured_product=None)
 
 
 
