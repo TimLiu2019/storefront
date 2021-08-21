@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.db import transaction
 from django.db.models import Q, F, Value, Func, ExpressionWrapper,DecimalField
 from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
@@ -11,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 
-
+# @transaction.atomic()
 def say_hello(request):
     # try:
     #     product = Product.objects.get(pk=0)
@@ -133,23 +134,35 @@ def say_hello(request):
    #  Collection.objects.filter(pk=11).update(featured_product=None)
 
     # Creating a shopping cart with an item
-    cart = Cart()
-    cart.save()
+   #  cart = Cart()
+   #  cart.save()
 
-    item1 = CartItem()
-    item1.cart = cart
-    item1.product_id = 1
-    item1.quantity = 1
-    item1.save()
+   #  item1 = CartItem()
+   #  item1.cart = cart
+   #  item1.product_id = 1
+   #  item1.quantity = 1
+   #  item1.save()
 
-    # Updating the quantity of an item
-    item1 = CartItem.objects.get(pk=1)
-    item1.quantity = 2
-    item1.save()
+   #  # Updating the quantity of an item
+   #  item1 = CartItem.objects.get(pk=1)
+   #  item1.quantity = 2
+   #  item1.save()
 
-    # Removing a cart
-    cart = Cart(pk=1)
-    cart.delete()
+   #  # Removing a cart
+   #  cart = Cart(pk=1)
+   #  cart.delete()
+    with transaction.atomic():
+      order = Order()
+      order.customer_id = 1
+      order.save()
+
+      item = OrderItem()
+      item.order = order
+      item.product_id = 1
+      item.quantity = 1
+      item.unit_price = 10
+      item.save()
+
 
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
