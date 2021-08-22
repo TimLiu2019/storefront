@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.db import transaction
+from django.db import transaction, connection
 from django.db.models import Q, F, Value, Func, ExpressionWrapper,DecimalField
 from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
@@ -151,19 +151,24 @@ def say_hello(request):
    #  # Removing a cart
    #  cart = Cart(pk=1)
    #  cart.delete()
-    with transaction.atomic():
-      order = Order()
-      order.customer_id = 1
-      order.save()
+   #  with transaction.atomic():
+   #    order = Order()
+   #    order.customer_id = 1
+   #    order.save()
 
-      item = OrderItem()
-      item.order = order
-      item.product_id = 1
-      item.quantity = 1
-      item.unit_price = 10
-      item.save()
+   #    item = OrderItem()
+   #    item.order = order
+   #    item.product_id = 1
+   #    item.quantity = 1
+   #    item.unit_price = 10
+   #    item.save()
+    
+   
 
+   #  queryset = Product.objects.raw('SELECT * FROM store_product')
+    with connection.cursor() as cursor:
+       cursor.execute()
 
 
     # return render(request, 'hello.html', {'name': 'Jeo', 'result': result})
-    return render(request, 'hello.html', {'name': 'Jeo'})
+    return render(request, 'hello.html', {'name': 'Jeo','result': list(queryset)})
