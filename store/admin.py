@@ -28,6 +28,8 @@ class CustomerAdmin(admin.ModelAdmin):
     list_editable = ['membership']
     ordering = ['first_name','last_name']
     list_per_page = 10
+    # search startswith
+    search_fields = ['first_name__istartswith','last_name__istartswith']
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
