@@ -1,9 +1,15 @@
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
 from . import models
 from django.db.models.aggregates import Count
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
+from tags.models import TaggedItem
 # Register your models here.
+class TagInline(GenericTabularInline):
+    autocomplete_fields = ['tag']
+    model = TaggedItem
+    
 
 class InventoryFilter(admin.SimpleListFilter):
     title = 'inventory'
@@ -18,8 +24,11 @@ class InventoryFilter(admin.SimpleListFilter):
         if self.value() == '<10':
            return queryset.filter(inventory__lt=10)
 
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    inlines = [TagInline]
     search_fields = ['title']
     autocomplete_fields = ['collection']
     prepopulated_fields = {
